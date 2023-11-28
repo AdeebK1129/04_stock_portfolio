@@ -1,7 +1,10 @@
 // NASDAQ fetch
 
-const url = 'https://twelve-data1.p.rapidapi.com/stocks?exchange=NASDAQ&format=json';
-const options = {
+const selectNASDAQStocksContainer = document.querySelector("#NASDAQStocks");
+const selectNYSEStocksContainer = document.querySelector("#NYSEStocks");
+
+const urlNASDAQ = 'https://twelve-data1.p.rapidapi.com/stocks?exchange=NASDAQ&format=json';
+const optionsNASDAQ = {
 	method: 'GET',
 	headers: {
 		'X-RapidAPI-Key': '5a7260a38dmsh17961d8946f04d4p1eec7bjsne59a5a7977e5',
@@ -9,17 +12,55 @@ const options = {
 	}
 };
 
-const initialize = async function(){
+const initializeNASDAQ = async function(){
   try {
-      const response = await fetch(url, options);
+      const response = await fetch(urlNASDAQ, optionsNASDAQ);
       const result = await response.json();
-      console.log(result.data[0]);
+      console.log(result.data);
+      populateNASDAQStocks(result)
   } catch (error) {
       console.error(error);
   }
 }
 
-//initialize()
+initializeNASDAQ()
+
+const urlNYSE = 'https://twelve-data1.p.rapidapi.com/stocks?exchange=NYSE&format=json';
+const optionsNYSE = {
+	method: 'GET',
+	headers: {
+		'X-RapidAPI-Key': '5a7260a38dmsh17961d8946f04d4p1eec7bjsne59a5a7977e5',
+		'X-RapidAPI-Host': 'twelve-data1.p.rapidapi.com'
+	}
+};
+
+const initializeNYSE = async function(){
+  try {
+      const response = await fetch(urlNYSE, optionsNYSE);
+      const result = await response.json();
+      console.log(result.data);
+      populateNYSEStocks(result)
+  } catch (error) {
+      console.error(error);
+  }
+}
+
+initializeNYSE()
+
+
+const populateNASDAQStocks = function(dataset){
+  for (const stock of dataset.data) { 
+      let optionHtml = `<option value="${stock.symbol}">${stock.symbol}</option>`; 
+      selectNASDAQStocksContainer.insertAdjacentHTML("beforeend", optionHtml);
+  } 
+};
+
+const populateNYSEStocks = function(dataset){
+  for (const stock of dataset.data) { 
+      let optionHtml = `<option value="${stock.symbol}">${stock.symbol}</option>`; 
+      selectNYSEStocksContainer.insertAdjacentHTML("beforeend", optionHtml);
+  } 
+};
 
 function setAPI(){
   document.cookie = `APIKEY=${document.querySelector("#apikey").value}`;
