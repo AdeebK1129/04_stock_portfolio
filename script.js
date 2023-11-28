@@ -105,5 +105,10 @@ const initialize2 = async function(){
 //initialize2()
 
 
-
-
+$(function () {
+  $('.datepicker').datepicker({
+    language: "es",
+    autoclose: true,
+    format: "dd/mm/yyyy"
+  });
+});
