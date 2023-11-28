@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <title>Hello, world!</title>
+        <title>Stock Portfolio</title>
     </head>
     <body>
         
@@ -15,9 +15,56 @@
             
                 <ul class="navbar-nav ml-auto">
                     <li class="navbar-item">
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">Enter API Info</button>
+                    </li>    
+                    <li class="navbar-item">
                         <a href="#" class="nav-link">API Credentials</a>
+                    </li>   
                 </ul>
         </nav>
+
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Enter API Info Below</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        
+                        <form>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label" for="email">API Key</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="email">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label" for="password">API Host</label>
+                                <div class="col-sm-9">
+                                    <input type="password" class="form-control" id="password">
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-sm-9 offset-sm-3">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </div>
+                            
+                        </form>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
