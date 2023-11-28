@@ -130,5 +130,10 @@ const initializeTimeSeries = async function(){
 initializeTimeSeries()
 
 
-
-
+$(function () {
+  $('.datepicker').datepicker({
+    language: "es",
+    autoclose: true,
+    format: "dd/mm/yyyy"
+  });
+});
