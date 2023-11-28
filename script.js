@@ -19,17 +19,50 @@ const initialize = async function(){
   }
 }
 
-initialize()
+//initialize()
 
-let SYMBOL = 'TSLA';
-let APIKEY = 'test';
+function setAPI(){
+  document.cookie = `APIKEY=${document.querySelector("#apikey").value}`;
+  document.cookie = `APIHOST=${document.querySelector("#apihost").value}`;
+  console.log("Testing set");
+} 
 
-const url2 = `https://api.twelvedata.com/time_series?symbol=${SYMBOL}&interval=1min&apikey=${APIKEY}`
-fetch(url2)
-.then(response => response.json())
-    .then(data => {
-        console.log(data[0])
-      })
-    .catch(err => console.log(err));
+// Source: W3Schools 
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+document.querySelector("#form").addEventListener("submit", setAPI);
+
+let SYMBOL = 'AAPL';
+
+const url2 = `https://api.twelvedata.com/time_series?symbol=${SYMBOL}&interval=1min&apikey=${getCookie('APIKEY')}`;
+
+const initialize2 = async function(){
+  try {
+      const response = await fetch(url2);
+      const result = await response.json();
+      console.log(result); 
+      console.log('Testing fetch');
+  } catch (error) {
+      console.error(error);
+  }
+};
+
+//initialize2()
+
+
 
 
