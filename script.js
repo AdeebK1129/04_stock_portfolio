@@ -7,8 +7,8 @@ const urlNASDAQ = 'https://twelve-data1.p.rapidapi.com/stocks?exchange=NASDAQ&fo
 const optionsNASDAQ = {
 	method: 'GET',
 	headers: {
-		'X-RapidAPI-Key': '5a7260a38dmsh17961d8946f04d4p1eec7bjsne59a5a7977e5',
-		'X-RapidAPI-Host': 'twelve-data1.p.rapidapi.com'
+		'X-RapidAPI-Key': `${getCookie('APIKEY')}`,
+		'X-RapidAPI-Host': `${getCookie('APIHOST')}`
 	}
 };
 
@@ -29,8 +29,8 @@ const urlNYSE = 'https://twelve-data1.p.rapidapi.com/stocks?exchange=NYSE&format
 const optionsNYSE = {
 	method: 'GET',
 	headers: {
-		'X-RapidAPI-Key': '5a7260a38dmsh17961d8946f04d4p1eec7bjsne59a5a7977e5',
-		'X-RapidAPI-Host': 'twelve-data1.p.rapidapi.com'
+		'X-RapidAPI-Key': `${getCookie('APIKEY')}`,
+		'X-RapidAPI-Host': `${getCookie('APIHOST')}`
 	}
 };
 
@@ -50,14 +50,14 @@ initializeNYSE()
 
 const populateNASDAQStocks = function(dataset){
   for (const stock of dataset.data) { 
-      let optionHtml = `<option value="${stock.symbol}">${stock.symbol}</option>`; 
+      let optionHtml = `<option value="${stock.symbol}">${stock.name}</option>`; 
       selectNASDAQStocksContainer.insertAdjacentHTML("beforeend", optionHtml);
   } 
 };
 
 const populateNYSEStocks = function(dataset){
   for (const stock of dataset.data) { 
-      let optionHtml = `<option value="${stock.symbol}">${stock.symbol}</option>`; 
+      let optionHtml = `<option value="${stock.symbol}">${stock.name}</option>`; 
       selectNYSEStocksContainer.insertAdjacentHTML("beforeend", optionHtml);
   } 
 };
@@ -87,9 +87,11 @@ function getCookie(cname) {
 
 document.querySelector("#form").addEventListener("submit", setAPI);
 
+/** 
+
 let SYMBOL = 'AAPL';
 
-const url2 = `https://api.twelvedata.com/time_series?symbol=${SYMBOL}&interval=1min&apikey=${getCookie('APIKEY')}`;
+const url2 = `https://api.twelvedata.com/time_series?symbol=${SYMBOL}&interval=1day&outputsize&apikey=${getCookie('APIKEY')}`;
 
 const initialize2 = async function(){
   try {
@@ -102,7 +104,30 @@ const initialize2 = async function(){
   }
 };
 
-//initialize2()
+initialize2()
+
+*/
+
+const url = 'https://twelve-data1.p.rapidapi.com/time_series?symbol=AMZN&interval=1day&outputsize=5000&format=json';
+const options = {
+	method: 'GET',
+	headers: {
+		'X-RapidAPI-Key': `${getCookie('APIKEY')}`,
+		'X-RapidAPI-Host': `${getCookie('APIHOST')}`
+	}
+};
+
+const initializeTimeSeries = async function(){
+  try {
+	  const response = await fetch(url, options);
+	  const result = await response.text();
+	  console.log(result);
+  } catch (error) {
+	  console.error(error);
+  }
+}
+
+initializeTimeSeries()
 
 
 
