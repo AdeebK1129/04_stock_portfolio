@@ -114,7 +114,7 @@
               <!-- // Date Picker -->
             </form>
           </div>
-  
+          
   
       
         <!-- Optional JavaScript -->
@@ -130,6 +130,22 @@
   
       <!-- Datepicker -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+      <script>
+        let initialCash = 0;
+        function setInitialAmount() {
+            const initialAmountInput = document.getElementById('initialAmount');
+            const enteredAmount = parseFloat(initialAmountInput.value);
+
+            if (isNaN(enteredAmount) || enteredAmount <= 0) {
+                alert('Please enter a valid initial cash amount.');
+                return;
+            }
+
+            initialCash = enteredAmount;
+            console.log('Initial Cash Amount set to: $', initialCash);
+
+        }
+    </script>
     </body>
   <html>
 </html>
