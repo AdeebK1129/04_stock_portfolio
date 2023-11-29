@@ -92,13 +92,17 @@ const initializeNYSE = async function () {
 const populateNASDAQStocks = function (dataset) {
   const selectNASDAQStocksContainer = document.querySelectorAll("#NASDAQStocks");
   // console.log(selectNASDAQStocksContainer)
-  for (const stock of dataset.data) {
-    let optionHtml = `<option value="${stock.symbol}">${stock.name}</option>`;
-    selectNASDAQStocksContainer.forEach(function (currentValue) {
-      currentValue.insertAdjacentHTML("beforeend", optionHtml);
-    })
-    // selectNASDAQStocksContainer.insertAdjacentHTML("beforeend", optionHtml);
-  }
+  selectNASDAQStocksContainer.forEach(function (currentValue) {
+    if(currentValue.innerHTML == "") {
+      for (const stock of dataset.data) {
+        let optionHtml = `<option value="${stock.symbol}">${stock.name}</option>`;
+        selectNASDAQStocksContainer.forEach(function (currentValue) {
+            currentValue.insertAdjacentHTML("beforeend", optionHtml);
+        })
+        // selectNASDAQStocksContainer.insertAdjacentHTML("beforeend", optionHtml);
+      }
+    }
+  })
 };
 
 const populateNYSEStocks = function (dataset) {
