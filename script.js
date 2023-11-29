@@ -263,3 +263,12 @@ function setInitialAmount() {
   //console.log('Initial Amoun:', initialAmount);
 
 }
+
+// Getting stock names and number of shares
+const nameButton = document.querySelector("#logName")
+nameButton.addEventListener("click", function() {
+  const names = document.querySelectorAll(".custom-select")
+  names.forEach(function(stock) {
+    console.log(stock.value)
+  })
+})
