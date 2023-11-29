@@ -31,6 +31,22 @@
                     </li>   
                 </ul>
         </nav>
+        
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Initial Amount (USD)</span>
+                        </div>
+                        <input type="number" class="form-control" id="initialAmount" placeholder="Enter initial amount">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" onclick="setInitialAmount()">Set</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="modal fade" id="myModal">
             <div class="modal-dialog">
@@ -130,22 +146,7 @@
   
       <!-- Datepicker -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-      <script>
-        let initialCash = 0;
-        function setInitialAmount() {
-            const initialAmountInput = document.getElementById('initialAmount');
-            const enteredAmount = parseFloat(initialAmountInput.value);
-
-            if (isNaN(enteredAmount) || enteredAmount <= 0) {
-                alert('Please enter a valid initial cash amount.');
-                return;
-            }
-
-            initialCash = enteredAmount;
-            console.log('Initial Cash Amount set to: $', initialCash);
-
-        }
-    </script>
+      
     </body>
   <html>
 </html>
