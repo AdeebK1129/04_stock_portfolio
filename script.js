@@ -1,4 +1,4 @@
-// NASDAQ fetch
+checkCookie()
 
 const selectNASDAQStocksContainer = document.querySelector("#NASDAQStocks");
 const selectNYSEStocksContainer = document.querySelector("#NYSEStocks");
@@ -83,6 +83,16 @@ function getCookie(cname) {
     }
   }
   return "";
+}
+
+function checkCookie() {
+  let keyCheck = getCookie("APIKEY");
+  console.log(keyCheck);
+  let hostCheck = getCookie("APIHOST");
+  console.log(hostCheck);
+  if ((hostCheck == "") || (keyCheck=="")) {
+      $('#myModal').modal('show');
+  }
 }
 
 document.querySelector("#form").addEventListener("submit", setAPI);
