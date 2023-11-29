@@ -210,6 +210,23 @@ function setInitialAmount() {
     return;
   }
   initialAmount = enteredAmount;
-  //console.log('Initial Amoun:', initialAmount);
+  //console.log('Initial Amount:', initialAmount);
 
+}
+
+function showPortfolioTable() {
+  const tableContent = document.createElement('table');
+  tableContent.classList.add('table');
+  const tableHeader = `
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Portfolio Value</th>
+                <th>P&L</th>
+            </tr>
+        </thead>`;
+
+  tableContent.innerHTML = tableHeader;
+  document.getElementById('portfolioTableContainer').innerHTML = '';
+  document.getElementById('portfolioTableContainer').appendChild(tableContent);
 }
