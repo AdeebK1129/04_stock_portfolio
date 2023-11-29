@@ -1,7 +1,7 @@
 checkCookie()
 
 // const selectNASDAQStocksContainer = document.querySelector("#NASDAQStocks");
-const selectNYSEStocksContainer = document.querySelector("#NYSEStocks");
+// const selectNYSEStocksContainer = document.querySelector("#NYSEStocks");
 
 const urlNASDAQ = 'https://twelve-data1.p.rapidapi.com/stocks?exchange=NASDAQ&format=json';
 const optionsNASDAQ = {
@@ -14,10 +14,11 @@ const optionsNASDAQ = {
 
 // New stock button
 
-const newStockButton = document.querySelector("#newStock")
+const newNASDAQButton = document.querySelector("#newNASDAQ")
+const newNYSEButton = document.querySelector("#newNYSE")
 const stockContainer = document.querySelector(".stocks")
 
-newStockButton.addEventListener("click", function () {
+newNASDAQButton.addEventListener("click", function () {
   const html = `
   <div class="row">
   <div class="col-sm-4 col-lg-4 mb-3">
@@ -51,6 +52,42 @@ newStockButton.addEventListener("click", function () {
 </div>`
   stockContainer.insertAdjacentHTML("beforeend", html)
   initializeNASDAQ()
+})
+
+newNYSEButton.addEventListener("click", function() {
+  const html = `
+  <div class="row">
+  <div class="col-sm-4 col-lg-4 mb-3">
+      <div class="input-group">
+          <div class="input-group-prepend">
+              <label class="input-group-text" for="NYSEStocks">NYSE Stocks</label>
+          </div>
+          <select class="custom-select" id="NYSEStocks"></select>
+      </div>
+  </div>
+
+  <div class="col-sm-4 col-lg-4 mb-3">
+      <div class="input-group">
+          <div class="input-group-prepend">
+              <label class="input-group-text" for="shares">Shares</label>
+          </div>
+          <input type="number" class="form-control" id="shares" name="shares" min="0" step="1">
+      </div>
+  </div>
+
+  <div class="col-sm-4 col-lg-4 mb-3">
+                    <div class="form-group">
+                        <div class="input-group date" id="datepicker">
+                            <input type="text" class="form-control" placeholder="Choose Date" id="fecha1">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+</div>`
+stockContainer.insertAdjacentHTML("beforeend", html)
+initializeNYSE()
 })
 
 const initializeNASDAQ = async function () {
@@ -106,10 +143,23 @@ const populateNASDAQStocks = function (dataset) {
 };
 
 const populateNYSEStocks = function (dataset) {
-  for (const stock of dataset.data) {
-    let optionHtml = `<option value="${stock.symbol}">${stock.name}</option>`;
-    selectNYSEStocksContainer.insertAdjacentHTML("beforeend", optionHtml);
-  }
+  // for (const stock of dataset.data) {
+  //   let optionHtml = `<option value="${stock.symbol}">${stock.name}</option>`;
+  //   selectNYSEStocksContainer.insertAdjacentHTML("beforeend", optionHtml);
+  // }
+  const selectNYSEStocksContainer = document.querySelectorAll("#NYSEStocks");
+  // console.log(selectNASDAQStocksContainer)
+  selectNYSEStocksContainer.forEach(function (currentValue) {
+    if(currentValue.innerHTML == "") {
+      for (const stock of dataset.data) {
+        let optionHtml = `<option value="${stock.symbol}">${stock.name}</option>`;
+        selectNYSEStocksContainer.forEach(function (currentValue) {
+            currentValue.insertAdjacentHTML("beforeend", optionHtml);
+        })
+        // selectNASDAQStocksContainer.insertAdjacentHTML("beforeend", optionHtml);
+      }
+    }
+  })
 };
 
 function setAPI() {
