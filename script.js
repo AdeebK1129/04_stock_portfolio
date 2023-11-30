@@ -164,7 +164,22 @@ const initialize2 = async function(){
   }
 };
 
-initialize2()
+let initialAmount = 0; 
+
+function setInitialAmount() {
+    const initialAmountInput = document.getElementById('initialAmount');
+    const enteredAmount = parseFloat(initialAmountInput.value);
+
+    if (isNaN(enteredAmount) || enteredAmount <= 0) { //idk if she said a minimum
+        alert('Please enter a valid initial cash amount.');
+        return;
+    }
+    initialAmount = enteredAmount;
+    //console.log('Initial Amoun:', initialAmount);
+
+}
+
+//initialize2()
 
 */
 
