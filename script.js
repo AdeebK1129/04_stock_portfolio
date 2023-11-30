@@ -275,28 +275,29 @@ function setInitialAmount() {
     return;
   }
   initialAmount = enteredAmount;
-  //console.log('Initial Amount:', initialAmount);
+  console.log('Initial Amount:', initialAmount);
 
 }
 
 // <<<<<<< HEAD
-// function showPortfolioTable() {
-//   const tableContent = document.createElement('table');
-//   tableContent.classList.add('table');
-//   const tableHeader = `
-//         <thead>
-//             <tr>
-//                 <th>Date</th>
-//                 <th>Portfolio Value</th>
-//                 <th>P&L</th>
-//             </tr>
-//         </thead>`;
+function showPortfolioTable() {
+  const tableContent = document.createElement('table');
+   tableContent.classList.add('table');
+      const tableHeader = `
+        <thead>
+             <tr>
+                 <th>Date</th>
+                 <th>Portfolio Value</th>
+                 <th>P&L</th>
+             </tr>
+         </thead>`;
 
-//   tableContent.innerHTML = tableHeader;
-//   document.getElementById('portfolioTableContainer').innerHTML = '';
-//   document.getElementById('portfolioTableContainer').appendChild(tableContent);
-// }
-// Getting stock names and number of shares
+   tableContent.innerHTML = tableHeader;
+   document.getElementById('portfolioTableContainer').innerHTML = '';
+   document.getElementById('portfolioTableContainer').appendChild(tableContent);
+ }
+ // Getting stock names and number of shares
+
 const nameButton = document.querySelector("#logName")
 nameButton.addEventListener("click", function() {
   const names = document.querySelectorAll(".custom-select")
