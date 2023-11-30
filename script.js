@@ -1,79 +1,129 @@
 checkCookie()
 
-const selectNASDAQStocksContainer = document.querySelector("#NASDAQStocks");
+// const selectNASDAQStocksContainer = document.querySelector("#NASDAQStocks");
 const selectNYSEStocksContainer = document.querySelector("#NYSEStocks");
 
 const urlNASDAQ = 'https://twelve-data1.p.rapidapi.com/stocks?exchange=NASDAQ&format=json';
 const optionsNASDAQ = {
-	method: 'GET',
-	headers: {
-		'X-RapidAPI-Key': `${getCookie('APIKEY')}`,
-		'X-RapidAPI-Host': `${getCookie('APIHOST')}`
-	}
+  method: 'GET',
+  headers: {
+    'X-RapidAPI-Key': `${getCookie('APIKEY')}`,
+    'X-RapidAPI-Host': `${getCookie('APIHOST')}`
+  }
 };
 
-const initializeNASDAQ = async function(){
+// New stock button
+
+const newStockButton = document.querySelector("#newStock")
+const stockContainer = document.querySelector(".stocks")
+
+newStockButton.addEventListener("click", function () {
+  const html = `
+  <div class="row">
+  <div class="col-sm-4 col-lg-4 mb-3">
+      <div class="input-group">
+          <div class="input-group-prepend">
+              <label class="input-group-text" for="NASDAQStocks">NASDAQ Stocks</label>
+          </div>
+          <select class="custom-select" id="NASDAQStocks"></select>
+      </div>
+  </div>
+
+  <div class="col-sm-4 col-lg-4 mb-3">
+      <div class="input-group">
+          <div class="input-group-prepend">
+              <label class="input-group-text" for="shares">Shares</label>
+          </div>
+          <input type="number" class="form-control" id="shares" name="shares" min="0" step="1">
+      </div>
+  </div>
+
+  <div class="col-sm-4 col-lg-4 mb-3">
+                    <div class="form-group">
+                        <div class="input-group date" id="datepicker">
+                            <input type="text" class="form-control" placeholder="Choose Date" id="fecha1">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+</div>`
+  stockContainer.insertAdjacentHTML("beforeend", html)
+  initializeNASDAQ()
+})
+
+const initializeNASDAQ = async function () {
   try {
-      const response = await fetch(urlNASDAQ, optionsNASDAQ);
-      const result = await response.json();
-      console.log(result.data);
-      populateNASDAQStocks(result)
+    const response = await fetch(urlNASDAQ, optionsNASDAQ);
+    const result = await response.json();
+    // console.log(result.data);
+    populateNASDAQStocks(result)
   } catch (error) {
-      console.error(error);
+    console.error(error);
   }
 }
 
-initializeNASDAQ()
+// initializeNASDAQ()
 
 const urlNYSE = 'https://twelve-data1.p.rapidapi.com/stocks?exchange=NYSE&format=json';
 const optionsNYSE = {
-	method: 'GET',
-	headers: {
-		'X-RapidAPI-Key': `${getCookie('APIKEY')}`,
-		'X-RapidAPI-Host': `${getCookie('APIHOST')}`
-	}
+  method: 'GET',
+  headers: {
+    'X-RapidAPI-Key': `${getCookie('APIKEY')}`,
+    'X-RapidAPI-Host': `${getCookie('APIHOST')}`
+  }
 };
 
-const initializeNYSE = async function(){
+const initializeNYSE = async function () {
   try {
-      const response = await fetch(urlNYSE, optionsNYSE);
-      const result = await response.json();
-      console.log(result.data);
-      populateNYSEStocks(result)
+    const response = await fetch(urlNYSE, optionsNYSE);
+    const result = await response.json();
+    console.log(result.data);
+    populateNYSEStocks(result)
   } catch (error) {
-      console.error(error);
+    console.error(error);
   }
 }
 
-initializeNYSE()
+// initializeNYSE()
 
 
-const populateNASDAQStocks = function(dataset){
-  for (const stock of dataset.data) { 
-      let optionHtml = `<option value="${stock.symbol}">${stock.name}</option>`; 
-      selectNASDAQStocksContainer.insertAdjacentHTML("beforeend", optionHtml);
-  } 
+const populateNASDAQStocks = function (dataset) {
+  const selectNASDAQStocksContainer = document.querySelectorAll("#NASDAQStocks");
+  // console.log(selectNASDAQStocksContainer)
+  selectNASDAQStocksContainer.forEach(function (currentValue) {
+    if(currentValue.innerHTML == "") {
+      for (const stock of dataset.data) {
+        let optionHtml = `<option value="${stock.symbol}">${stock.name}</option>`;
+        selectNASDAQStocksContainer.forEach(function (currentValue) {
+            currentValue.insertAdjacentHTML("beforeend", optionHtml);
+        })
+        // selectNASDAQStocksContainer.insertAdjacentHTML("beforeend", optionHtml);
+      }
+    }
+  })
 };
 
-const populateNYSEStocks = function(dataset){
-  for (const stock of dataset.data) { 
-      let optionHtml = `<option value="${stock.symbol}">${stock.name}</option>`; 
-      selectNYSEStocksContainer.insertAdjacentHTML("beforeend", optionHtml);
-  } 
+const populateNYSEStocks = function (dataset) {
+  for (const stock of dataset.data) {
+    let optionHtml = `<option value="${stock.symbol}">${stock.name}</option>`;
+    selectNYSEStocksContainer.insertAdjacentHTML("beforeend", optionHtml);
+  }
 };
 
-function setAPI(){
+function setAPI() {
   document.cookie = `APIKEY=${document.querySelector("#apikey").value}`;
   document.cookie = `APIHOST=${document.querySelector("#apihost").value}`;
   console.log("Testing set");
-} 
+}
 
 // Source: W3Schools 
 function getCookie(cname) {
   let name = cname + "=";
   let decodedCookie = decodeURIComponent(document.cookie);
   let ca = decodedCookie.split(';');
-  for(let i = 0; i <ca.length; i++) {
+  for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
     while (c.charAt(0) == ' ') {
       c = c.substring(1);
@@ -90,8 +140,8 @@ function checkCookie() {
   console.log(keyCheck);
   let hostCheck = getCookie("APIHOST");
   console.log(hostCheck);
-  if ((hostCheck == "") || (keyCheck=="")) {
-      $('#myModal').modal('show');
+  if ((hostCheck == "") || (keyCheck == "")) {
+    $('#myModal').modal('show');
   }
 }
 
@@ -114,30 +164,45 @@ const initialize2 = async function(){
   }
 };
 
-initialize2()
+let initialAmount = 0; 
+
+function setInitialAmount() {
+    const initialAmountInput = document.getElementById('initialAmount');
+    const enteredAmount = parseFloat(initialAmountInput.value);
+
+    if (isNaN(enteredAmount) || enteredAmount <= 0) { //idk if she said a minimum
+        alert('Please enter a valid initial cash amount.');
+        return;
+    }
+    initialAmount = enteredAmount;
+    //console.log('Initial Amoun:', initialAmount);
+
+}
+
+//initialize2()
 
 */
 
 const url = 'https://twelve-data1.p.rapidapi.com/time_series?symbol=AMZN&interval=1day&outputsize=5000&format=json';
 const options = {
-	method: 'GET',
-	headers: {
-		'X-RapidAPI-Key': `${getCookie('APIKEY')}`,
-		'X-RapidAPI-Host': `${getCookie('APIHOST')}`
-	}
+  method: 'GET',
+  headers: {
+    'X-RapidAPI-Key': `${getCookie('APIKEY')}`,
+    'X-RapidAPI-Host': `${getCookie('APIHOST')}`
+  }
 };
 
-const initializeTimeSeries = async function(){
+const initializeTimeSeries = async function () {
   try {
-	  const response = await fetch(url, options);
-	  const result = await response.text();
-	  console.log(result);
+    const response = await fetch(url, options);
+    const result = await response.text();
+    console.log(result);
   } catch (error) {
-	  console.error(error);
+    console.error(error);
   }
 }
 
-initializeTimeSeries()
+// initializeTimeSeries()
 
 
 $(function () {
@@ -147,3 +212,36 @@ $(function () {
     format: "yyyy-mm-dd"
   });
 });
+
+
+let initialAmount = 0;
+
+function setInitialAmount() {
+  const initialAmountInput = document.getElementById('initialAmount');
+  const enteredAmount = parseFloat(initialAmountInput.value);
+
+  if (isNaN(enteredAmount) || enteredAmount <= 0) { //idk if she said a minimum
+    alert('Please enter a valid initial cash amount.');
+    return;
+  }
+  initialAmount = enteredAmount;
+  //console.log('Initial Amount:', initialAmount);
+
+}
+
+function showPortfolioTable() {
+  const tableContent = document.createElement('table');
+  tableContent.classList.add('table');
+  const tableHeader = `
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Portfolio Value</th>
+                <th>P&L</th>
+            </tr>
+        </thead>`;
+
+  tableContent.innerHTML = tableHeader;
+  document.getElementById('portfolioTableContainer').innerHTML = '';
+  document.getElementById('portfolioTableContainer').appendChild(tableContent);
+}
