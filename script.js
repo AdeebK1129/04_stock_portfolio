@@ -26,7 +26,7 @@ newNASDAQButton.addEventListener("click", function () {
           <div class="input-group-prepend">
               <label class="input-group-text" for="NASDAQStocks">NASDAQ Stocks</label>
           </div>
-          <select class="custom-select" id="NASDAQStocks"></select>
+          <select class="custom-select nasdaqStock" id="NASDAQStocks"></select>
       </div>
   </div>
 
@@ -35,26 +35,40 @@ newNASDAQButton.addEventListener("click", function () {
           <div class="input-group-prepend">
               <label class="input-group-text" for="shares">Shares</label>
           </div>
-          <input type="number" class="form-control" id="shares" name="shares" min="0" step="1">
+          <input type="number" class="form-control nasdaqShares" id="shares" name="shares" min="0" step="1">
       </div>
   </div>
 
   <div class="col-sm-4 col-lg-4 mb-3">
-                    <div class="form-group">
-                        <div class="input-group date" id="datepicker">
-                            <input type="text" class="form-control" placeholder="Choose Date" id="fecha1">
-                            <div class="input-group-append">
-                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                            </div>
-                        </div>
-                    </div>
+    <div class="form-group">
+      <form>
+        <div class="form-group mb-4">
+            <div class="datepicker date input-group">
+                <input type="text" placeholder="Choose Date" class="form-control" id="fecha1">
+                <div class="input-group-append">
+                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                 </div>
-</div>`
+            </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+`
+
+$(function () {
+  $('.datepicker').datepicker({
+    language: "es",
+    autoclose: true,
+    format: "yyyy-mm-dd"
+  });
+});
+
   stockContainer.insertAdjacentHTML("beforeend", html)
   initializeNASDAQ()
 })
 
-newNYSEButton.addEventListener("click", function() {
+newNYSEButton.addEventListener("click", function () {
   const html = `
   <div class="row">
   <div class="col-sm-4 col-lg-4 mb-3">
@@ -62,7 +76,7 @@ newNYSEButton.addEventListener("click", function() {
           <div class="input-group-prepend">
               <label class="input-group-text" for="NYSEStocks">NYSE Stocks</label>
           </div>
-          <select class="custom-select" id="NYSEStocks"></select>
+          <select class="custom-select nyseStock" id="NYSEStocks"></select>
       </div>
   </div>
 
@@ -71,21 +85,34 @@ newNYSEButton.addEventListener("click", function() {
           <div class="input-group-prepend">
               <label class="input-group-text" for="shares">Shares</label>
           </div>
-          <input type="number" class="form-control" id="shares" name="shares" min="0" step="1">
+          <input type="number" class="form-control nyseShares" id="shares" name="shares" min="0" step="1">
       </div>
   </div>
 
   <div class="col-sm-4 col-lg-4 mb-3">
-                    <div class="form-group">
-                        <div class="input-group date" id="datepicker">
-                            <input type="text" class="form-control" placeholder="Choose Date" id="fecha1">
-                            <div class="input-group-append">
-                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                            </div>
-                        </div>
-                    </div>
+    <div class="form-group">
+      <form>
+        <div class="form-group mb-4">
+            <div class="datepicker date input-group">
+                <input type="text" placeholder="Choose Date" class="form-control" id="fecha1">
+                <div class="input-group-append">
+                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                 </div>
+            </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>`
+
+$(function () {
+  $('.datepicker').datepicker({
+    language: "es",
+    autoclose: true,
+    format: "yyyy-mm-dd"
+  });
+});
+
 stockContainer.insertAdjacentHTML("beforeend", html)
 initializeNYSE()
 })
@@ -130,11 +157,11 @@ const populateNASDAQStocks = function (dataset) {
   const selectNASDAQStocksContainer = document.querySelectorAll("#NASDAQStocks");
   // console.log(selectNASDAQStocksContainer)
   selectNASDAQStocksContainer.forEach(function (currentValue) {
-    if(currentValue.innerHTML == "") {
+    if (currentValue.innerHTML == "") {
       for (const stock of dataset.data) {
         let optionHtml = `<option value="${stock.symbol}">${stock.name}</option>`;
         selectNASDAQStocksContainer.forEach(function (currentValue) {
-            currentValue.insertAdjacentHTML("beforeend", optionHtml);
+          currentValue.insertAdjacentHTML("beforeend", optionHtml);
         })
         // selectNASDAQStocksContainer.insertAdjacentHTML("beforeend", optionHtml);
       }
@@ -150,11 +177,11 @@ const populateNYSEStocks = function (dataset) {
   const selectNYSEStocksContainer = document.querySelectorAll("#NYSEStocks");
   // console.log(selectNASDAQStocksContainer)
   selectNYSEStocksContainer.forEach(function (currentValue) {
-    if(currentValue.innerHTML == "") {
+    if (currentValue.innerHTML == "") {
       for (const stock of dataset.data) {
         let optionHtml = `<option value="${stock.symbol}">${stock.name}</option>`;
         selectNYSEStocksContainer.forEach(function (currentValue) {
-            currentValue.insertAdjacentHTML("beforeend", optionHtml);
+          currentValue.insertAdjacentHTML("beforeend", optionHtml);
         })
         // selectNASDAQStocksContainer.insertAdjacentHTML("beforeend", optionHtml);
       }
@@ -299,10 +326,38 @@ function showPortfolioTable() {
  // Getting stock names and number of shares
 
 const nameButton = document.querySelector("#logName")
-nameButton.addEventListener("click", function() {
-  const names = document.querySelectorAll(".custom-select")
-  names.forEach(function(stock) {
-    console.log(stock.value)
+nameButton.addEventListener("click", function () {
+  const nasdaqStocks = []
+  const nyseStocks = []
+
+  const nasdaqNames = document.querySelectorAll(".nasdaqStock")
+  const nasdaqShares = document.querySelectorAll(".nasdaqShares")
+  nasdaqNames.forEach(function (stock, index) {
+    const nasdaqStock = {
+      "name": stock.value,
+      "shares": nasdaqShares[index].valueAsNumber,
+    }
+    nasdaqStocks.push(nasdaqStock)
+  })
+
+  const nyseNames = document.querySelectorAll(".nyseStock")
+  const nyseShares = document.querySelectorAll(".nyseShares")
+  nyseNames.forEach(function (stock, index) {
+    const nyseStock = {
+      "name": stock.value,
+      "shares": nyseShares[index].valueAsNumber,
+    }
+    nyseStocks.push(nyseStock)
+  })
+
+  console.log("Nasdaq stocks: ")
+  nasdaqStocks.forEach(function (value) {
+    console.log(value)
+  })
+
+  console.log("Nyse stocks: ")
+  nyseStocks.forEach(function (value) {
+    console.log(value)
   })
 })
 
