@@ -35,7 +35,7 @@ newNASDAQButton.addEventListener("click", function () {
           <div class="input-group-prepend">
               <label class="input-group-text" for="shares">Shares</label>
           </div>
-          <input type="number" class="form-control nasdaqShares" id="shares" name="shares" min="0" step="1">
+          <input type="number" class="form-control nasdaqShares" id="shares" name="shares" min="0" step="1" value="0">
       </div>
   </div>
 
@@ -44,7 +44,7 @@ newNASDAQButton.addEventListener("click", function () {
       <form>
         <div class="form-group mb-4">
             <div class="datepicker date input-group">
-                <input type="text" placeholder="Choose Date" class="form-control" id="fecha1">
+                <input type="text" placeholder="Choose Date" class="form-control nasdaqDate" id="fecha1">
                 <div class="input-group-append">
                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                 </div>
@@ -85,7 +85,7 @@ newNYSEButton.addEventListener("click", function () {
           <div class="input-group-prepend">
               <label class="input-group-text" for="shares">Shares</label>
           </div>
-          <input type="number" class="form-control nyseShares" id="shares" name="shares" min="0" step="1">
+          <input type="number" class="form-control nyseShares" id="shares" name="shares" min="0" step="1" value="0">
       </div>
   </div>
 
@@ -94,7 +94,8 @@ newNYSEButton.addEventListener("click", function () {
       <form>
         <div class="form-group mb-4">
             <div class="datepicker date input-group">
-                <input type="text" placeholder="Choose Date" class="form-control" id="fecha1">
+                <input type="text" placeholder="Choose Date" class="form-control nyseDate" id="fecha1">
+
                 <div class="input-group-append">
                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                 </div>
@@ -332,20 +333,24 @@ nameButton.addEventListener("click", function () {
 
   const nasdaqNames = document.querySelectorAll(".nasdaqStock")
   const nasdaqShares = document.querySelectorAll(".nasdaqShares")
+  const nasdaqDates = document.querySelectorAll(".nasdaqDate")
   nasdaqNames.forEach(function (stock, index) {
     const nasdaqStock = {
       "name": stock.value,
       "shares": nasdaqShares[index].valueAsNumber,
+      "date": nasdaqDates[index].value,
     }
     nasdaqStocks.push(nasdaqStock)
   })
 
   const nyseNames = document.querySelectorAll(".nyseStock")
   const nyseShares = document.querySelectorAll(".nyseShares")
+  const nyseDates = document.querySelectorAll(".nyseDate")
   nyseNames.forEach(function (stock, index) {
     const nyseStock = {
       "name": stock.value,
       "shares": nyseShares[index].valueAsNumber,
+      "date": nyseDates[index].value,
     }
     nyseStocks.push(nyseStock)
   })
