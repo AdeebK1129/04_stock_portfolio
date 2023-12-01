@@ -56,13 +56,13 @@ newNASDAQButton.addEventListener("click", function () {
 </div>
 `
 
-$(function () {
-  $('.datepicker').datepicker({
-    language: "es",
-    autoclose: true,
-    format: "yyyy-mm-dd"
+  $(function () {
+    $('.datepicker').datepicker({
+      language: "es",
+      autoclose: true,
+      format: "yyyy-mm-dd"
+    });
   });
-});
 
   stockContainer.insertAdjacentHTML("beforeend", html)
   initializeNASDAQ()
@@ -106,16 +106,16 @@ newNYSEButton.addEventListener("click", function () {
   </div>
 </div>`
 
-$(function () {
-  $('.datepicker').datepicker({
-    language: "es",
-    autoclose: true,
-    format: "yyyy-mm-dd"
+  $(function () {
+    $('.datepicker').datepicker({
+      language: "es",
+      autoclose: true,
+      format: "yyyy-mm-dd"
+    });
   });
-});
 
-stockContainer.insertAdjacentHTML("beforeend", html)
-initializeNYSE()
+  stockContainer.insertAdjacentHTML("beforeend", html)
+  initializeNYSE()
 })
 
 const initializeNASDAQ = async function () {
@@ -270,18 +270,6 @@ const options = {
   }
 };
 
-const initializeTimeSeries = async function () {
-  try {
-    const response = await fetch(url, options);
-    const result = await response.text();
-    console.log(result);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// initializeTimeSeries()
-
 
 $(function () {
   $('.datepicker').datepicker({
@@ -324,12 +312,14 @@ function setInitialAmount() {
 //   document.getElementById('portfolioTableContainer').innerHTML = '';
 //   document.getElementById('portfolioTableContainer').appendChild(tableContent);
 // }
-// Getting stock names and number of shares and date
-const nameButton = document.querySelector("#logName")
-nameButton.addEventListener("click", function () {
+
+// Get results button
+const resultButton = document.querySelector("#results")
+resultButton.addEventListener("click", function () {
   const nasdaqStocks = []
   const nyseStocks = []
 
+  // retrieving each stock data
   const nasdaqNames = document.querySelectorAll(".nasdaqStock")
   const nasdaqShares = document.querySelectorAll(".nasdaqShares")
   const nasdaqDates = document.querySelectorAll(".nasdaqDate")
@@ -354,6 +344,7 @@ nameButton.addEventListener("click", function () {
     nyseStocks.push(nyseStock)
   })
 
+  // plugging into time series
   console.log("Nasdaq stocks: ")
   nasdaqStocks.forEach(function (value) {
     console.log(value)
@@ -365,3 +356,22 @@ nameButton.addEventListener("click", function () {
   })
 })
 
+const initializeTimeSeries = async function (stockName, numShares, dateTime) {
+  const url = `https://twelve-data1.p.rapidapi.com/time_series?interval=1day&symbol=${stockName}&format=json&outputsize=5000`;
+  const options = {
+    method: 'GET',
+    headers: {
+      'X-RapidAPI-Key': `${getCookie('APIKEY')}`,
+      'X-RapidAPI-Host': `${getCookie('APIHOST')}`
+    }
+  };
+  try {
+    const response = await fetch(url, options);
+    const result = await response.text();
+    console.log(result);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// initializeTimeSeries("AAPL", 20)
