@@ -90,15 +90,19 @@ newNYSEButton.addEventListener("click", function () {
   </div>
 
   <div class="col-sm-4 col-lg-4 mb-3">
-                    <div class="form-group">
-                        <div class="input-group date" id="datepicker">
-                            <input type="text" class="form-control" placeholder="Choose Date" id="fecha1">
-                            <div class="input-group-append">
-                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                            </div>
-                        </div>
-                    </div>
+    <div class="form-group">
+      <form>
+        <div class="form-group mb-4">
+            <div class="datepicker date input-group">
+                <input type="text" placeholder="Choose Date" class="form-control" id="fecha1">
+                <div class="input-group-append">
+                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                 </div>
+            </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>`
 
 $(function () {
