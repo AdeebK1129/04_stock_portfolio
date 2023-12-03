@@ -56,13 +56,13 @@ newNASDAQButton.addEventListener("click", function () {
 </div>
 `
 
-$(function () {
-  $('.datepicker').datepicker({
-    language: "es",
-    autoclose: true,
-    format: "yyyy-mm-dd"
+  $(function () {
+    $('.datepicker').datepicker({
+      language: "es",
+      autoclose: true,
+      format: "yyyy-mm-dd"
+    });
   });
-});
 
   stockContainer.insertAdjacentHTML("beforeend", html)
   initializeNASDAQ()
@@ -106,16 +106,16 @@ newNYSEButton.addEventListener("click", function () {
   </div>
 </div>`
 
-$(function () {
-  $('.datepicker').datepicker({
-    language: "es",
-    autoclose: true,
-    format: "yyyy-mm-dd"
+  $(function () {
+    $('.datepicker').datepicker({
+      language: "es",
+      autoclose: true,
+      format: "yyyy-mm-dd"
+    });
   });
-});
 
-stockContainer.insertAdjacentHTML("beforeend", html)
-initializeNYSE()
+  stockContainer.insertAdjacentHTML("beforeend", html)
+  initializeNYSE()
 })
 
 const initializeNASDAQ = async function () {
@@ -144,7 +144,7 @@ const initializeNYSE = async function () {
   try {
     const response = await fetch(urlNYSE, optionsNYSE);
     const result = await response.json();
-    console.log(result.data);
+    // console.log(result.data);
     populateNYSEStocks(result)
   } catch (error) {
     console.error(error);
@@ -270,18 +270,6 @@ const options = {
   }
 };
 
-const initializeTimeSeries = async function () {
-  try {
-    const response = await fetch(url, options);
-    const result = await response.text();
-    console.log(result);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// initializeTimeSeries()
-
 
 $(function () {
   $('.datepicker').datepicker({
@@ -303,42 +291,91 @@ function setInitialAmount() {
     return;
   }
   initialAmount = enteredAmount;
-  console.log('Initial Amount:', initialAmount);
+  //console.log('Initial Amount:', initialAmount);
 
 }
 
-// <<<<<<< HEAD
-function showPortfolioTable() {
-  const tableContent = document.createElement('table');
-   tableContent.classList.add('table');
-      const tableHeader = `
-        <thead>
-             <tr>
-                 <th>Date</th>
-                 <th>Portfolio Value</th>
-                 <th>P&L</th>
-             </tr>
-         </thead>`;
+// function showPortfolioTable() {
+//   const tableContent = document.createElement('table');
+//   tableContent.classList.add('table');
+//   const tableHeader = `
+//         <thead>
+//             <tr>
+//                 <th>Date</th>
+//                 <th>Portfolio Value</th>
+//                 <th>P&L</th>
+//             </tr>
+//         </thead>`;
 
-   tableContent.innerHTML = tableHeader;
-   document.getElementById('portfolioTableContainer').innerHTML = '';
-   document.getElementById('portfolioTableContainer').appendChild(tableContent);
- }
- // Getting stock names and number of shares
+//   tableContent.innerHTML = tableHeader;
+//   document.getElementById('portfolioTableContainer').innerHTML = '';
+//   document.getElementById('portfolioTableContainer').appendChild(tableContent);
+// }
 
-const nameButton = document.querySelector("#logName")
-nameButton.addEventListener("click", function () {
+// dictionary containing datetime as a key, and portfolio value as a value
+const days = {}
+
+// method to update days
+function updateDays(closeValue,datetime,shares) {
+  if(datetime in days) {
+    // console.log("bruh")
+    const currentValue = days[datetime]
+    const newValue = currentValue + (closeValue * shares)
+    days[datetime] = newValue
+  }
+  else {
+    const newValue = closeValue * shares
+    days[datetime] = newValue
+  }
+}
+
+// time series
+const initializeTimeSeries = async function (stockName, numShares, dateTime) {
+  const url = `https://twelve-data1.p.rapidapi.com/time_series?interval=1day&symbol=${stockName}&format=json&outputsize=5000`;
+  const options = {
+    method: 'GET',
+    headers: {
+      'X-RapidAPI-Key': `${getCookie('APIKEY')}`,
+      'X-RapidAPI-Host': `${getCookie('APIHOST')}`
+    }
+  };
+  try{
+    const response = await fetch(url, options);
+    const result = await response.json();
+    // console.log(result["values"]);    
+    const stockInfoArray = result["values"]
+    for(i=0;i<stockInfoArray.length;i++) {
+      if(stockInfoArray[i].datetime < dateTime) {
+        break
+      }
+      else {
+        const closeValue = stockInfoArray[i].close
+        const currentDate = stockInfoArray[i].datetime
+        updateDays(closeValue,currentDate,numShares)
+      }
+    }
+  } catch(error) {
+    console.log(error)
+  }
+}
+
+// Get results button
+const resultButton = document.querySelector("#results")
+resultButton.addEventListener("click", loadResults)
+
+async function loadResults() {
   const nasdaqStocks = []
   const nyseStocks = []
 
+  // retrieving each stock data
   const nasdaqNames = document.querySelectorAll(".nasdaqStock")
   const nasdaqShares = document.querySelectorAll(".nasdaqShares")
   const nasdaqDates = document.querySelectorAll(".nasdaqDate")
   nasdaqNames.forEach(function (stock, index) {
     const nasdaqStock = {
-      "name": stock.value,
-      "shares": nasdaqShares[index].valueAsNumber,
-      "date": nasdaqDates[index].value,
+      name: stock.value,
+      shares: nasdaqShares[index].valueAsNumber,
+      date: nasdaqDates[index].value,
     }
     nasdaqStocks.push(nasdaqStock)
   })
@@ -348,21 +385,61 @@ nameButton.addEventListener("click", function () {
   const nyseDates = document.querySelectorAll(".nyseDate")
   nyseNames.forEach(function (stock, index) {
     const nyseStock = {
-      "name": stock.value,
-      "shares": nyseShares[index].valueAsNumber,
-      "date": nyseDates[index].value,
+      name: stock.value,
+      shares: nyseShares[index].valueAsNumber,
+      date: nyseDates[index].value,
     }
     nyseStocks.push(nyseStock)
   })
 
-  console.log("Nasdaq stocks: ")
-  nasdaqStocks.forEach(function (value) {
-    console.log(value)
-  })
+  // plugging into time series
 
-  console.log("Nyse stocks: ")
-  nyseStocks.forEach(function (value) {
-    console.log(value)
-  })
-})
+  const allStocks = nasdaqStocks.concat(nyseStocks)
+  // console.log(allStocks)
+  for(value of allStocks) {
+    const stockName = value.name
+    const stockShares = value.shares
+    const stockDate = value.date
+    await initializeTimeSeries(stockName, stockShares, stockDate)
+    // console.log("Finished " + stockName)
+  }
 
+  // console.log(days)
+  makeTable(Object.entries(days))
+}
+function makeTable(tableArray) {
+  const tableContent = document.createElement('table');
+  tableContent.classList.add('table');
+  const tableHeader = `
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Portfolio Value</th>
+                <th>P&L</th>
+            </tr>
+        </thead>`;
+
+  tableContent.innerHTML = tableHeader;
+
+  // Sort the tableArray based on dates
+  tableArray.sort((a, b) => new Date(a[0]) - new Date(b[0]));
+
+  let initialInvestment = initialAmount;
+
+  for (let i = 0; i < tableArray.length; i++) {
+    const currentDate = tableArray[i][0];
+    const currentPortfolioValue = tableArray[i][1];
+    const pnl = currentPortfolioValue - initialInvestment;
+
+    const tableRow = `
+      <tr>
+        <td>${currentDate}</td>
+        <td>${currentPortfolioValue.toFixed(2)}</td>
+        <td>${pnl.toFixed(2)}</td>
+      </tr>`;
+    tableContent.innerHTML += tableRow;
+  }
+
+  document.getElementById('portfolioTableContainer').innerHTML = '';
+  document.getElementById('portfolioTableContainer').appendChild(tableContent);
+}
