@@ -424,17 +424,22 @@ function makeTable(tableArray) {
   // Sort the tableArray based on dates
   tableArray.sort((a, b) => new Date(a[0]) - new Date(b[0]));
 
-  let initialInvestment = initialAmount;
+  let initialPortfolioValue = tableArray.length > 0 ? tableArray[0][1] : initialAmount;
+  let cumulativePortfolioValue = initialPortfolioValue;
 
   for (let i = 0; i < tableArray.length; i++) {
     const currentDate = tableArray[i][0];
     const currentPortfolioValue = tableArray[i][1];
-    const pnl = currentPortfolioValue - initialInvestment;
+    const pnl = currentPortfolioValue - cumulativePortfolioValue;
+
+    cumulativePortfolioValue += pnl; // Update cumulative portfolio value
+
+    const displayedPortfolioValue = (cumulativePortfolioValue + 10000).toFixed(2);
 
     const tableRow = `
       <tr>
         <td>${currentDate}</td>
-        <td>${currentPortfolioValue.toFixed(2)}</td>
+        <td>${displayedPortfolioValue}</td>
         <td>${pnl.toFixed(2)}</td>
       </tr>`;
     tableContent.innerHTML += tableRow;
