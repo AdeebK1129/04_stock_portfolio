@@ -313,9 +313,9 @@ function setInitialAmount() {
 // }
 
 // dictionary containing datetime as a key, and portfolio value as a value
-var days = {}
+const days = {}
 
-// method to update p
+// method to update days
 function updateDays(closeValue,datetime,shares) {
   if(datetime in days) {
     // console.log("bruh")
@@ -342,7 +342,7 @@ const initializeTimeSeries = async function (stockName, numShares, dateTime) {
   try{
     const response = await fetch(url, options);
     const result = await response.json();
-    // console.log(result["values"]);
+    // console.log(result["values"]);    
     const stockInfoArray = result["values"]
     for(i=0;i<stockInfoArray.length;i++) {
       if(stockInfoArray[i].datetime < dateTime) {
@@ -361,7 +361,9 @@ const initializeTimeSeries = async function (stockName, numShares, dateTime) {
 
 // Get results button
 const resultButton = document.querySelector("#results")
-resultButton.addEventListener("click", function () {
+resultButton.addEventListener("click", loadResults)
+
+async function loadResults() {
   const nasdaqStocks = []
   const nyseStocks = []
 
@@ -392,38 +394,19 @@ resultButton.addEventListener("click", function () {
 
   // plugging into time series
 
-  nasdaqStocks.forEach(function(value) {
+  const allStocks = nasdaqStocks.concat(nyseStocks)
+  // console.log(allStocks)
+  for(value of allStocks) {
     const stockName = value.name
     const stockShares = value.shares
     const stockDate = value.date
-    initializeTimeSeries(stockName, stockShares, stockDate)
-    console.log("Finished nasdaq")
-  })
+    await initializeTimeSeries(stockName, stockShares, stockDate)
+    // console.log("Finished " + stockName)
+  }
 
-  nyseStocks.forEach(function(value) {
-    const stockName = value.name
-    const stockShares = value.shares
-    const stockDate = value.date
-    initializeTimeSeries(stockName, stockShares, stockDate)
-    console.log("Finished nyse")
-  })
-
-  console.log(days)
+  // console.log(days)
   makeTable(Object.entries(days))
-  
-
-
-
-  // console.log("Nasdaq stocks: ")
-  // nasdaqStocks.forEach(function (value) {
-  //   console.log(value.name)
-  // })
-
-  // console.log("Nyse stocks: ")
-  // nyseStocks.forEach(function (value) {
-  //   console.log(value)
-  // })
-})
+}
 
 function makeTable(tableArray) {
   const tableContent = document.createElement('table');
@@ -444,7 +427,7 @@ function makeTable(tableArray) {
     <tr>
     <td>${tableArray[i][0]}</td>
     <td>${tableArray[i][1]}</td>
-    <td>!!!!</td>
+    <td>${tableArray[i][1] - initialAmount}</td>
     </tr>`
     tableContent.innerHTML += testRow
   }
