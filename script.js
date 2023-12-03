@@ -144,7 +144,7 @@ const initializeNYSE = async function () {
   try {
     const response = await fetch(urlNYSE, optionsNYSE);
     const result = await response.json();
-    console.log(result.data);
+    // console.log(result.data);
     populateNYSEStocks(result)
   } catch (error) {
     console.error(error);
@@ -295,7 +295,6 @@ function setInitialAmount() {
 
 }
 
-// <<<<<<< HEAD
 // function showPortfolioTable() {
 //   const tableContent = document.createElement('table');
 //   tableContent.classList.add('table');
@@ -313,6 +312,53 @@ function setInitialAmount() {
 //   document.getElementById('portfolioTableContainer').appendChild(tableContent);
 // }
 
+// dictionary containing datetime as a key, and portfolio value as a value
+var days = {}
+
+// method to update p
+function updateDays(closeValue,datetime,shares) {
+  if(datetime in days) {
+    // console.log("bruh")
+    const currentValue = days[datetime]
+    const newValue = currentValue + (closeValue * shares)
+    days[datetime] = newValue
+  }
+  else {
+    const newValue = closeValue * shares
+    days[datetime] = newValue
+  }
+}
+
+// time series
+const initializeTimeSeries = async function (stockName, numShares, dateTime) {
+  const url = `https://twelve-data1.p.rapidapi.com/time_series?interval=1day&symbol=${stockName}&format=json&outputsize=5000`;
+  const options = {
+    method: 'GET',
+    headers: {
+      'X-RapidAPI-Key': `${getCookie('APIKEY')}`,
+      'X-RapidAPI-Host': `${getCookie('APIHOST')}`
+    }
+  };
+  try{
+    const response = await fetch(url, options);
+    const result = await response.json();
+    // console.log(result["values"]);
+    const stockInfoArray = result["values"]
+    for(i=0;i<stockInfoArray.length;i++) {
+      if(stockInfoArray[i].datetime < dateTime) {
+        break
+      }
+      else {
+        const closeValue = stockInfoArray[i].close
+        const currentDate = stockInfoArray[i].datetime
+        updateDays(closeValue,currentDate,numShares)
+      }
+    }
+  } catch(error) {
+    console.log(error)
+  }
+}
+
 // Get results button
 const resultButton = document.querySelector("#results")
 resultButton.addEventListener("click", function () {
@@ -325,9 +371,9 @@ resultButton.addEventListener("click", function () {
   const nasdaqDates = document.querySelectorAll(".nasdaqDate")
   nasdaqNames.forEach(function (stock, index) {
     const nasdaqStock = {
-      "name": stock.value,
-      "shares": nasdaqShares[index].valueAsNumber,
-      "date": nasdaqDates[index].value,
+      name: stock.value,
+      shares: nasdaqShares[index].valueAsNumber,
+      date: nasdaqDates[index].value,
     }
     nasdaqStocks.push(nasdaqStock)
   })
@@ -337,41 +383,72 @@ resultButton.addEventListener("click", function () {
   const nyseDates = document.querySelectorAll(".nyseDate")
   nyseNames.forEach(function (stock, index) {
     const nyseStock = {
-      "name": stock.value,
-      "shares": nyseShares[index].valueAsNumber,
-      "date": nyseDates[index].value,
+      name: stock.value,
+      shares: nyseShares[index].valueAsNumber,
+      date: nyseDates[index].value,
     }
     nyseStocks.push(nyseStock)
   })
 
   // plugging into time series
-  console.log("Nasdaq stocks: ")
-  nasdaqStocks.forEach(function (value) {
-    console.log(value)
+
+  nasdaqStocks.forEach(function(value) {
+    const stockName = value.name
+    const stockShares = value.shares
+    const stockDate = value.date
+    initializeTimeSeries(stockName, stockShares, stockDate)
+    console.log("Finished nasdaq")
   })
 
-  console.log("Nyse stocks: ")
-  nyseStocks.forEach(function (value) {
-    console.log(value)
+  nyseStocks.forEach(function(value) {
+    const stockName = value.name
+    const stockShares = value.shares
+    const stockDate = value.date
+    initializeTimeSeries(stockName, stockShares, stockDate)
+    console.log("Finished nyse")
   })
+
+  console.log(days)
+  makeTable(Object.entries(days))
+  
+
+
+
+  // console.log("Nasdaq stocks: ")
+  // nasdaqStocks.forEach(function (value) {
+  //   console.log(value.name)
+  // })
+
+  // console.log("Nyse stocks: ")
+  // nyseStocks.forEach(function (value) {
+  //   console.log(value)
+  // })
 })
 
-const initializeTimeSeries = async function (stockName, numShares, dateTime) {
-  const url = `https://twelve-data1.p.rapidapi.com/time_series?interval=1day&symbol=${stockName}&format=json&outputsize=5000`;
-  const options = {
-    method: 'GET',
-    headers: {
-      'X-RapidAPI-Key': `${getCookie('APIKEY')}`,
-      'X-RapidAPI-Host': `${getCookie('APIHOST')}`
-    }
-  };
-  try {
-    const response = await fetch(url, options);
-    const result = await response.text();
-    console.log(result);
-  } catch (error) {
-    console.error(error);
-  }
-}
+function makeTable(tableArray) {
+  const tableContent = document.createElement('table');
+  tableContent.classList.add('table');
+  const tableHeader = `
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Portfolio Value</th>
+                <th>P&L</th>
+            </tr>
+        </thead>`;
 
+  tableContent.innerHTML = tableHeader;
+
+  for(i=0; i<tableArray.length; i++) {
+    const testRow = `
+    <tr>
+    <td>${tableArray[i][0]}</td>
+    <td>${tableArray[i][1]}</td>
+    <td>!!!!</td>
+    </tr>`
+    tableContent.innerHTML += testRow
+  }
+  document.getElementById('portfolioTableContainer').innerHTML = '';
+  document.getElementById('portfolioTableContainer').appendChild(tableContent);
+}
 // initializeTimeSeries("AAPL", 20)
