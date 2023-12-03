@@ -56,13 +56,13 @@ newNASDAQButton.addEventListener("click", function () {
 </div>
 `
 
-  $(function () {
-    $('.datepicker').datepicker({
-      language: "es",
-      autoclose: true,
-      format: "yyyy-mm-dd"
+    $(function () {
+      $('.datepicker').datepicker({
+        language: "es",
+        autoclose: true,
+        format: "yyyy-mm-dd"
+      });
     });
-  });
 
   stockContainer.insertAdjacentHTML("beforeend", html)
   initializeNASDAQ()
@@ -106,16 +106,16 @@ newNYSEButton.addEventListener("click", function () {
   </div>
 </div>`
 
-  $(function () {
-    $('.datepicker').datepicker({
-      language: "es",
-      autoclose: true,
-      format: "yyyy-mm-dd"
+    $(function () {
+      $('.datepicker').datepicker({
+        language: "es",
+        autoclose: true,
+        format: "yyyy-mm-dd"
+      });
     });
-  });
 
-  stockContainer.insertAdjacentHTML("beforeend", html)
-  initializeNYSE()
+    stockContainer.insertAdjacentHTML("beforeend", html)
+    initializeNYSE()
 })
 
 const initializeNASDAQ = async function () {
@@ -144,7 +144,7 @@ const initializeNYSE = async function () {
   try {
     const response = await fetch(urlNYSE, optionsNYSE);
     const result = await response.json();
-    // console.log(result.data);
+    // // console.log(result.data);
     populateNYSEStocks(result)
   } catch (error) {
     console.error(error);
@@ -364,15 +364,72 @@ const resultButton = document.querySelector("#results")
 resultButton.addEventListener("click", loadResults)
 
 async function loadResults() {
+
+// dictionary containing datetime as a key, and portfolio value as a value
+const days = {}
+
+// method to update days
+function updateDays(closeValue,datetime,shares) {
+  if(datetime in days) {
+    // console.log("bruh")
+    const currentValue = days[datetime]
+    const newValue = currentValue + (closeValue * shares)
+    days[datetime] = newValue
+  }
+  else {
+    const newValue = closeValue * shares
+    days[datetime] = newValue
+  }
+}
+
+// time series
+const initializeTimeSeries = async function (stockName, numShares, dateTime) {
+  const url = `https://twelve-data1.p.rapidapi.com/time_series?interval=1day&symbol=${stockName}&format=json&outputsize=5000`;
+  const options = {
+    method: 'GET',
+    headers: {
+      'X-RapidAPI-Key': `${getCookie('APIKEY')}`,
+      'X-RapidAPI-Host': `${getCookie('APIHOST')}`
+    }
+  };
+  try{
+    const response = await fetch(url, options);
+    const result = await response.json();
+    // console.log(result["values"]);    
+    const stockInfoArray = result["values"]
+    for(i=0;i<stockInfoArray.length;i++) {
+      if(stockInfoArray[i].datetime < dateTime) {
+        break
+      }
+      else {
+        const closeValue = stockInfoArray[i].close
+        const currentDate = stockInfoArray[i].datetime
+        updateDays(closeValue,currentDate,numShares)
+      }
+    }
+  } catch(error) {
+    console.log(error)
+  }
+}
+
+// Get results button
+const resultButton = document.querySelector("#results")
+resultButton.addEventListener("click", loadResults)
+
+async function loadResults() {
   const nasdaqStocks = []
   const nyseStocks = []
 
+  // retrieving each stock data
   // retrieving each stock data
   const nasdaqNames = document.querySelectorAll(".nasdaqStock")
   const nasdaqShares = document.querySelectorAll(".nasdaqShares")
   const nasdaqDates = document.querySelectorAll(".nasdaqDate")
   nasdaqNames.forEach(function (stock, index) {
     const nasdaqStock = {
+      name: stock.value,
+      shares: nasdaqShares[index].valueAsNumber,
+      date: nasdaqDates[index].value,
       name: stock.value,
       shares: nasdaqShares[index].valueAsNumber,
       date: nasdaqDates[index].value,
@@ -385,6 +442,9 @@ async function loadResults() {
   const nyseDates = document.querySelectorAll(".nyseDate")
   nyseNames.forEach(function (stock, index) {
     const nyseStock = {
+      name: stock.value,
+      shares: nyseShares[index].valueAsNumber,
+      date: nyseDates[index].value,
       name: stock.value,
       shares: nyseShares[index].valueAsNumber,
       date: nyseDates[index].value,
