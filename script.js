@@ -363,58 +363,8 @@ const initializeTimeSeries = async function (stockName, numShares, dateTime) {
 const resultButton = document.querySelector("#results")
 resultButton.addEventListener("click", loadResults)
 
-async function loadResults() {
 
-// dictionary containing datetime as a key, and portfolio value as a value
-const days = {}
 
-// method to update days
-function updateDays(closeValue,datetime,shares) {
-  if(datetime in days) {
-    // console.log("bruh")
-    const currentValue = days[datetime]
-    const newValue = currentValue + (closeValue * shares)
-    days[datetime] = newValue
-  }
-  else {
-    const newValue = closeValue * shares
-    days[datetime] = newValue
-  }
-}
-
-// time series
-const initializeTimeSeries = async function (stockName, numShares, dateTime) {
-  const url = `https://twelve-data1.p.rapidapi.com/time_series?interval=1day&symbol=${stockName}&format=json&outputsize=5000`;
-  const options = {
-    method: 'GET',
-    headers: {
-      'X-RapidAPI-Key': `${getCookie('APIKEY')}`,
-      'X-RapidAPI-Host': `${getCookie('APIHOST')}`
-    }
-  };
-  try{
-    const response = await fetch(url, options);
-    const result = await response.json();
-    // console.log(result["values"]);    
-    const stockInfoArray = result["values"]
-    for(i=0;i<stockInfoArray.length;i++) {
-      if(stockInfoArray[i].datetime < dateTime) {
-        break
-      }
-      else {
-        const closeValue = stockInfoArray[i].close
-        const currentDate = stockInfoArray[i].datetime
-        updateDays(closeValue,currentDate,numShares)
-      }
-    }
-  } catch(error) {
-    console.log(error)
-  }
-}
-
-// Get results button
-const resultButton = document.querySelector("#results")
-resultButton.addEventListener("click", loadResults)
 
 async function loadResults() {
   const nasdaqStocks = []
