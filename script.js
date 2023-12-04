@@ -363,23 +363,16 @@ const initializeTimeSeries = async function (stockName, numShares, dateTime) {
 const resultButton = document.querySelector("#results")
 resultButton.addEventListener("click", loadResults)
 
-
-
-
 async function loadResults() {
   const nasdaqStocks = []
   const nyseStocks = []
 
-  // retrieving each stock data
   // retrieving each stock data
   const nasdaqNames = document.querySelectorAll(".nasdaqStock")
   const nasdaqShares = document.querySelectorAll(".nasdaqShares")
   const nasdaqDates = document.querySelectorAll(".nasdaqDate")
   nasdaqNames.forEach(function (stock, index) {
     const nasdaqStock = {
-      name: stock.value,
-      shares: nasdaqShares[index].valueAsNumber,
-      date: nasdaqDates[index].value,
       name: stock.value,
       shares: nasdaqShares[index].valueAsNumber,
       date: nasdaqDates[index].value,
@@ -392,9 +385,6 @@ async function loadResults() {
   const nyseDates = document.querySelectorAll(".nyseDate")
   nyseNames.forEach(function (stock, index) {
     const nyseStock = {
-      name: stock.value,
-      shares: nyseShares[index].valueAsNumber,
-      date: nyseDates[index].value,
       name: stock.value,
       shares: nyseShares[index].valueAsNumber,
       date: nyseDates[index].value,
@@ -417,7 +407,6 @@ async function loadResults() {
   // console.log(days)
   makeTable(Object.entries(days))
 }
-
 function makeTable(tableArray) {
   const tableContent = document.createElement('table');
   tableContent.classList.add('table');
@@ -432,15 +421,30 @@ function makeTable(tableArray) {
 
   tableContent.innerHTML = tableHeader;
 
-  for(i=0; i<tableArray.length; i++) {
-    const testRow = `
-    <tr>
-    <td>${tableArray[i][0]}</td>
-    <td>${tableArray[i][1]}</td>
-    <td>${tableArray[i][1] - initialAmount}</td>
-    </tr>`
-    tableContent.innerHTML += testRow
+  // Sort the tableArray based on dates
+  tableArray.sort((a, b) => new Date(a[0]) - new Date(b[0]));
+
+  let initialPortfolioValue = tableArray.length > 0 ? tableArray[0][1] : initialAmount;
+  let cumulativePortfolioValue = initialPortfolioValue;
+
+  for (let i = 0; i < tableArray.length; i++) {
+    const currentDate = tableArray[i][0];
+    const currentPortfolioValue = tableArray[i][1];
+    const pnl = currentPortfolioValue - cumulativePortfolioValue;
+    const actualpnl = currentPortfolioValue - initialPortfolioValue 
+    cumulativePortfolioValue += pnl; // Update cumulative portfolio value
+
+    const displayedPortfolioValue = (cumulativePortfolioValue + initialAmount).toFixed(2);
+
+    const tableRow = `
+      <tr>
+        <td>${currentDate}</td>
+        <td>${displayedPortfolioValue}</td>
+        <td>${actualpnl.toFixed(2)}</td>
+      </tr>`;
+    tableContent.innerHTML += tableRow;
   }
+
   document.getElementById('portfolioTableContainer').innerHTML = '';
   document.getElementById('portfolioTableContainer').appendChild(tableContent);
 }
