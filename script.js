@@ -406,6 +406,9 @@ async function loadResults() {
 
   // console.log(days)
   makeTable(Object.entries(days))
+
+  //reset values
+  stockContainer.innerHTML = "";
 }
 function makeTable(tableArray) {
   const tableContent = document.createElement('table');
