@@ -56,13 +56,13 @@ newNASDAQButton.addEventListener("click", function () {
 </div>
 `
 
-    $(function () {
-      $('.datepicker').datepicker({
-        language: "es",
-        autoclose: true,
-        format: "yyyy-mm-dd"
-      });
+  $(function () {
+    $('.datepicker').datepicker({
+      language: "es",
+      autoclose: true,
+      format: "yyyy-mm-dd"
     });
+  });
 
   stockContainer.insertAdjacentHTML("beforeend", html)
   initializeNASDAQ()
@@ -106,16 +106,16 @@ newNYSEButton.addEventListener("click", function () {
   </div>
 </div>`
 
-    $(function () {
-      $('.datepicker').datepicker({
-        language: "es",
-        autoclose: true,
-        format: "yyyy-mm-dd"
-      });
+  $(function () {
+    $('.datepicker').datepicker({
+      language: "es",
+      autoclose: true,
+      format: "yyyy-mm-dd"
     });
+  });
 
-    stockContainer.insertAdjacentHTML("beforeend", html)
-    initializeNYSE()
+  stockContainer.insertAdjacentHTML("beforeend", html)
+  initializeNYSE()
 })
 
 const initializeNASDAQ = async function () {
@@ -144,7 +144,7 @@ const initializeNYSE = async function () {
   try {
     const response = await fetch(urlNYSE, optionsNYSE);
     const result = await response.json();
-    // // console.log(result.data);
+    // console.log(result.data);
     populateNYSEStocks(result)
   } catch (error) {
     console.error(error);
@@ -442,10 +442,9 @@ function makeTable(tableArray) {
         <td>${displayedPortfolioValue}</td>
         <td>${actualpnl.toFixed(2)}</td>
       </tr>`;
-    tableContent.innerHTML += tableRow;
+     tableContent.insertAdjacentHTML('afterbegin', tableRow);
   }
 
   document.getElementById('portfolioTableContainer').innerHTML = '';
   document.getElementById('portfolioTableContainer').appendChild(tableContent);
 }
-// initializeTimeSeries("AAPL", 20)
