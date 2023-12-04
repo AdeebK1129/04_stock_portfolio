@@ -431,16 +431,16 @@ function makeTable(tableArray) {
     const currentDate = tableArray[i][0];
     const currentPortfolioValue = tableArray[i][1];
     const pnl = currentPortfolioValue - cumulativePortfolioValue;
-
+    const actualpnl = currentPortfolioValue - initialPortfolioValue 
     cumulativePortfolioValue += pnl; // Update cumulative portfolio value
 
-    const displayedPortfolioValue = (cumulativePortfolioValue + 10000).toFixed(2);
+    const displayedPortfolioValue = (cumulativePortfolioValue + initialAmount).toFixed(2);
 
     const tableRow = `
       <tr>
         <td>${currentDate}</td>
         <td>${displayedPortfolioValue}</td>
-        <td>${pnl.toFixed(2)}</td>
+        <td>${actualpnl.toFixed(2)}</td>
       </tr>`;
     tableContent.innerHTML += tableRow;
   }
